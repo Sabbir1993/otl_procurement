@@ -24,6 +24,6 @@ class UiParityPoTest extends TestCase
         if (!$po) {
             $this->markTestSkipped('no PO in seed');
         }
-        $this->asRole('imp')->get(route('pi.show', $po['no']))->assertOk()->assertSee('Record supplier PI');
+        $this->asRole('imp')->get(route('pi.show', $po['no']))->assertOk()->assertSee('data-open="pi-form"', false);
     }
 }

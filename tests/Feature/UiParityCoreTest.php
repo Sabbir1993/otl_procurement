@@ -16,9 +16,9 @@ class UiParityCoreTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_topbar_has_global_search_dropdown(): void
+    public function test_topbar_no_longer_shows_search_case_selector_or_create_menu(): void
     {
-        $this->asRole('exec')->get(route('home'))->assertOk()->assertSee('id="gsr"', false)->assertSee('data-gs=', false);
+        $this->asRole('exec')->get(route('home'))->assertOk()->assertDontSee('id="gsr"', false)->assertDontSee('id="menu-create"', false)->assertDontSee('name="id" title="Working case"', false)->assertSee('id="menu-user"', false);
     }
 
     public function test_global_search_groups_results(): void

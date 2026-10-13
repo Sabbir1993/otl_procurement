@@ -31,13 +31,6 @@ return [
         ['route' => 'po.ack', 'label' => 'Acknowledgments'],
         ['route' => 'po.disp', 'label' => 'Amendments & Disputes'],
     ]],
-    ['key' => 'imp', 'title' => 'Import & Warehouse', 'icon' => 'bank', 'items' => [
-        ['route' => 'imp.pi', 'label' => 'PI & Banking Documents', 'also' => ['pi.show']],
-        ['route' => 'imp.lc', 'label' => 'LC Register'],
-        ['route' => 'ship', 'label' => 'Shipment Tracking (ERP)'],
-        ['route' => 'grn', 'label' => 'GRN / Inspection (ERP)'],
-        ['route' => 'pay', 'label' => 'Invoice & Payment (ERP)'],
-    ]],
     ['key' => 'sd', 'title' => 'Suppliers', 'icon' => 'users', 'items' => [
         ['route' => 'sup.dir', 'label' => 'Supplier Directory', 'also' => ['sup.show']],
         ['route' => 'portal', 'label' => 'Supplier Portal Preview'],
