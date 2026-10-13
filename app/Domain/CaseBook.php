@@ -371,7 +371,7 @@ class CaseBook
             'SUPPLIER_CONTACT_NAME' => $sp['contact'] ?? '', 'RFQ_NUMBER' => $iv['rfq'] ?? $this->s['rfq']['no'],
             'PRODUCTS' => implode('; ', array_map(fn ($id) => Masters::material($id)['name'] . ' (' . Fmt::n0($this->reqQty($id)) . ' ' . Masters::material($id)['uom'] . ')', $iv['pids'])),
             'RFQ_DEADLINE_CHINA' => Fmt::dCN($iv['deadline']), 'RFQ_DEADLINE_BD' => Fmt::tz($iv['deadline'], 'H:i') . ' BST',
-            'RFQ_LINK' => 'https://rfq.[oil-domain]/s/' . ($iv['tokPlain'] ?? '[TOKEN]'),
+            'RFQ_LINK' => \App\Support\Link::to('/s/' . ($iv['tokPlain'] ?? '[TOKEN]')),
         ];
     }
 

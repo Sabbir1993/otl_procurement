@@ -52,7 +52,7 @@
 @endphp
 {!! Ui::flowBar($c, 'rq.booking') !!}
 @if ($done)
-    {!! Ui::alert('info', e($b['serial']) . ' confirmed', 'Signed document <b>' . e($b['doc']) . '</b> (' . e($b['ref'] ?? '') . ') attached · confirmed ' . Fmt::dS($b['at'] ?? null) . ' by ' . e($b['by'] ?? '') . '.', '<a class="btn sm pri" href="' . e(route('src.rfq')) . '">Create RFQ</a>') !!}
+    {!! Ui::alert('info', e($b['serial']) . ' confirmed', 'Signed document <b>' . e($b['doc']) . '</b> (' . e($b['ref'] ?? '') . ') attached · confirmed ' . Fmt::dS($b['at'] ?? null) . ' by ' . e($b['by'] ?? '') . '.', '<a class="btn sm pri" href="' . e(route('src.rfq', ['new' => 1])) . '">Create RFQ</a>') !!}
 @else
     {!! Ui::alert('warn', 'Not confirmed yet', 'Edit book quantities if needed, then confirm with the signed document. Upload a CSV (<code>product_id,book_qty</code>) to override in bulk.') !!}
 @endif

@@ -144,6 +144,6 @@ class RequisitionController extends Controller
             Storage::delete($path);
             throw $e;
         }
-        return $this->done("{$serial} confirmed", 'ok', ['url' => route('src.rfq'), 'label' => 'Create RFQ']);
+        return $this->done("{$serial} confirmed", 'ok', ['url' => route('src.rfq', ['new' => 1]), 'label' => 'Create RFQ']);
     }
 }

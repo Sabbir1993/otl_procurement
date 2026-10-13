@@ -36,6 +36,10 @@
 @if ($c)
     {!! Ui::flowBar($c, 'src.rfq') !!}
     <div style="margin-top:12px"></div>
+    @if ($c->s['booking']['confirmed'] && empty($c->s['rfq']['no']))
+        {!! Ui::alert('info', 'No RFQ created yet for ' . e($c->id), 'The booking is confirmed. Click “New RFQ” to choose suppliers and create the drafts — the RFQ appears in the list below once created.', \App\Domain\Perm::can('rfq.create') ? '<a class="btn sm pri" href="' . e(route('src.rfq', ['new' => 1])) . '">New RFQ</a>' : '') !!}
+        <div style="margin-top:12px"></div>
+    @endif
     @if (!$c->s['booking']['confirmed'])
         {!! Ui::alert('warn', 'Booking not confirmed for ' . e($c->id), 'The RFQ is built from the confirmed book quantity.', '<a class="btn sm" href="' . e(route('rq.booking')) . '">Go to booking</a>') !!}
         <div style="margin-top:12px"></div>
