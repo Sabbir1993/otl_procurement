@@ -1,0 +1,1 @@
+@extends('requisitions.erp-base')

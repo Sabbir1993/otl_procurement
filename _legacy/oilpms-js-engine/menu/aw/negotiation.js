@@ -1,0 +1,6 @@
+/* =====================  NEGOTIATION HISTORY (13)  ===================== */
+PAGES['aw.neg']=()=>{
+  const rows=[];DB.cases.forEach(c=>c.booking.lines.forEach(l=>csOf(c,l.pid).neg.forEach(n=>rows.push({...n,pid:l.pid,c}))));
+  return{t:'Negotiation History',sub:'Original quotations stay immutable. Each round records the revised commercial term, who agreed it and why.',crumbs:[['Command Center','home'],['Negotiation & Awards','aw.neg'],'Negotiation History'],acts:`<button class="btn pri" data-go="src.cs">Open comparative statement</button>`,
+  html:table('neg',[{k:'id',t:'Round',r:r=>`<b>${r.id}</b>`},{k:'c',t:'Case',r:r=>r.c.id},{k:'pid',t:'Material',r:r=>`${r.pid} · ${esc(prod(r.pid).name)}`,s:r=>r.pid},{k:'sup',t:'Supplier',r:r=>esc(supOf(r.sid).name),s:r=>supOf(r.sid).name},{k:'from',t:'Original',cls:'r',r:r=>usd3(r.from),s:r=>r.from},{k:'to',t:'Revised',cls:'r',r:r=>usd3(r.to),s:r=>r.to},{k:'chg',t:'Change',cls:'r',r:r=>`<span style="color:var(--ok);font-weight:600">${((r.to-r.from)/r.from*100).toFixed(1)}%</span>`,s:r=>(r.to-r.from)/r.from},{k:'why',t:'Reason',r:r=>`<span class="sm">${esc(r.reason)}</span>`},{k:'by',t:'By'}],()=>rows,{key:r=>r.id,empty:'No negotiation rounds yet',emptyHint:'Start one from a supplier column in the comparative statement.'})};
+};

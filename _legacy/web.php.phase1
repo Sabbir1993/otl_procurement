@@ -1,0 +1,22 @@
+<?php
+
+use App\Http\Controllers\AssetController;
+use Illuminate\Support\Facades\Route;
+
+// UI engine script (modular sources in resources/js/oilpms, order in config/oilpms.php -> js)
+Route::get('/_assets/oilpms.js', [AssetController::class, 'js'])->name('oilpms.js');
+
+// One route file per sidebar group: routes/menu/{cc,cs,rq,src,aw,po,imp,sd,an,ctl,adm}.php
+foreach (array_keys(config('oilpms.menu')) as $group) {
+    require base_path("routes/menu/$group.php");
+}
+
+// unknown path -> in-app "Page not found"
+Route::fallback(fn () => response(view('pages.not-found'), 404));
+
+// TEMP-EXTRACT (remove after extraction)
+Route::post('/__extract', function (\Illuminate\Http\Request $r) {
+    $d = storage_path('extract'); @mkdir($d, 0777, true);
+    file_put_contents("$d/" . preg_replace('/[^\w.\-]/', '_', $r->input('name')) . '.json', $r->input('data'));
+    return 'ok';
+})->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);

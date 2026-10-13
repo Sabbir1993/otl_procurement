@@ -1,0 +1,249 @@
+--- ppt/slides/slide1.xml
+OSMAN INTERLININGS LIMITED (OIL)
+Procurement Process Automation
+Proposed process flow — from purchase requisition to LC opening
+Management presentation to the Honorable Managing Director · 11 October 2026
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+--- ppt/slides/slide2.xml
+The procurement process at a glance
+Seven process heads, 22 stages — one connected digital workflow with a named owner at every step
+01
+Requisition
+Stages 01–03
+Marketing / Store → Procurement
+02
+Sourcing &amp; RFQ
+Stages 04–09
+Procurement · System · Supplier
+03
+Evaluation
+Stages 10–12
+Procurement · QA / Marketing
+04
+Negotiation &amp; award
+Stages 13–14
+Procurement
+05
+Approvals
+Stages 15–17
+Marketing → Finance → ED
+06
+Purchase order
+Stages 18–20
+System · Supplier
+07
+PI &amp; LC opening
+Stages 21–22
+Procurement · Import · Finance
+22 process stages
+8 decision gates
+3 sequential approvals
+1 auditable record per case
+2
+--- ppt/slides/slide3.xml
+01 Requisition
+Requirements are captured once, consolidated and verified before any supplier is contacted
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 01
+Raise purchase requisition
+Marketing / Store
+STAGE 02
+Consolidate demand
+Procurement
+STAGE 03
+Verify and validate
+Procurement
+Each requisition gets a unique ID and a responsible owner
+Incomplete requests go back to the requester with a reason
+3
+--- ppt/slides/slide4.xml
+02 Sourcing &amp; RFQ
+Every invited supplier quotes through its own secure, time-limited link
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 04
+Prepare RFQ
+Procurement
+STAGE 05
+Shortlist suppliers
+Procurement
+STAGE 06
+Secure link per supplier
+System
+STAGE 07
+Automatic RFQ email
+System
+STAGE 08
+Supplier submits quote
+Supplier
+STAGE 09
+Deadline control
+System
+Deadline: 3 China working days (2 if urgent), closing 17:00 China time
+Each supplier sees only its own RFQ; quotes stay confidential
+4
+--- ppt/slides/slide5.xml
+03 Evaluation
+Offers are compared like for like on five parameters — total landed cost, not unit price alone
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 10
+Comparative statement
+System / Procurement
+STAGE 11
+Sample testing
+QA / Marketing
+STAGE 12
+Technical acceptance
+QA / Marketing
+EVALUATION PARAMETERS AND SAMPLE WEIGHTS
+Cost
+Unit price (normalized UOM, dated FX)
+Freight, insurance, duties, bank charges
+Total landed cost
+Technical &amp; Quality
+Specification compliance
+Sample test result
+Deviations to spec or quality
+Delivery
+Production and dispatch timing
+MOQ
+Stock available
+Commercial terms
+Incoterms and named port
+Payment terms and working-capital need
+Quote validity
+Supplier history
+Delivery reliability
+Quality complaints and replacement response
+Capacity and documentation
+Weights are illustrative from the specification and must be approved before use. A failed sample cannot be awarded — no weighting can override a QA rejection.
+5
+--- ppt/slides/slide6.xml
+04 Negotiation &amp; award
+Procurement negotiates with qualified suppliers and recommends one with a written rationale
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 13
+Commercial negotiation
+Procurement
+STAGE 14
+Award recommendation
+Procurement
+Every negotiation round and quote version is kept
+Selection weighs cost, quality, delivery and risk — not price alone
+6
+--- ppt/slides/slide7.xml
+05 Approvals
+Three sequential sign-offs, each timestamped and logged
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 15
+Marketing acknowledgment
+Marketing
+STAGE 16
+Finance approval
+Finance &amp; Accounts
+STAGE 17
+ED final approval
+ED / delegate
+A return at any level goes back to Procurement for negotiation
+Any material change after approval requires reapproval
+7
+--- ppt/slides/slide8.xml
+06 Purchase order
+The PO is generated from the approved terms and sent automatically
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 18
+Auto-generate PO
+System
+STAGE 19
+Validate and email PO
+System
+STAGE 20
+Supplier acknowledgment
+Supplier
+Sent only after final approval and all completeness checks
+A supplier dispute becomes a change request; the PO is never edited
+8
+--- ppt/slides/slide9.xml
+07 PI &amp; LC opening
+The LC is opened only against a PI that matches the approved PO
+Requisition
+Sourcing &amp; RFQ
+Evaluation
+Negotiation &amp; award
+Approvals
+Purchase order
+PI &amp; LC opening
+STAGE 21
+Receive supplier PI
+Procurement / Import / Finance
+STAGE 21
+Match PI to PO
+Procurement / Import / Finance
+STAGE 22
+Import documents and banking checks
+Import / Logistics
+STAGE 22
+LC approval
+Finance control
+STAGE 22
+LC opening
+Import / Logistics
+Any PI mismatch becomes a documented exception or change request
+Changed bank details are verified independently before use
+9
+--- ppt/slides/slide10.xml
+Decisions for management to confirm
+The process is a proposed target state; these choices finalize it
+Approval authority and limits
+Final approver (ED, MD or delegate) and value thresholds
+RFQ deadline rules
+Counting convention, closing hour and calendar per supplier or RFQ
+Sample testing and waivers
+When testing is mandatory and which deviations are acceptable
+Supplier scoring
+Weights and tie-break rules for supplier selection
+LC-opening procedure
+Detailed LC steps and the LC approver
+Full detail of every stage, owner and control is in the companion workbook OIL_Procurement_Process_Flow.xlsx
+10

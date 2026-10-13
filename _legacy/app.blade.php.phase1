@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>@yield('title', 'OIL-PMS') · OIL-PMS</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="{{ asset('css/oilpms.css') }}?v={{ filemtime(public_path('css/oilpms.css')) }}">
+</head>
+<body>
+<script>
+window.OILPMS_BASE = @json(request()->getBasePath());
+window.OILPMS_PAGE = @json(trim($__env->yieldContent('page')));
+window.OILPMS_ROUTES = @json(collect(config('oilpms.pages'))->map(fn ($p) => $p['path']));
+window.OILPMS_DETAIL = @json(array_keys(config('oilpms.detail')));
+</script>
+<script src="{{ url('_assets/oilpms.js') }}"></script>
+</body>
+</html>

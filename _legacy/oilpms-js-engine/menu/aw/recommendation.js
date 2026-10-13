@@ -1,0 +1,23 @@
+/* =====================  FINAL RECOMMENDATION (14)  ===================== */
+PAGES['aw.rec']=()=>{
+  const c=C();if(!c)return noCase();
+  if(!c.inv.length)return{t:'Final Recommendation',crumbs:[['Command Center','home'],['Negotiation & Awards','aw.neg'],'Final Recommendation'],html:flowBar(c,'aw.rec')+emptyState('Nothing to recommend yet','Complete the comparative statement first.','<button class="btn pri" data-go="src.cs">Open comparative statement</button>')};
+  const cnt=csCounts(c),A=c.appr,aw=lineAwards(c);
+  const rows=c.booking.lines.map(l=>{const x=csOf(c,l.pid),ids=Object.keys(x.alloc);
+    if(x.excl)return`<tr><td><b>${l.pid}</b><div class="mut sm">${esc(prod(l.pid).name)}</div></td><td>${pill('Excluded')}</td><td>—</td><td>—</td><td class="sm">${esc(x.exclWhy)}</td><td>—</td></tr>`;
+    if(!ids.length)return`<tr><td><b>${l.pid}</b><div class="mut sm">${esc(prod(l.pid).name)}</div></td><td>${pill('Pending')}</td><td>—</td><td>—</td><td class="mut sm">Decide in CS</td><td>—</td></tr>`;
+    const est=sum(ids,s=>landed(c.quotes[s][l.pid])*x.alloc[s]/c.quotes[s][l.pid].qty),alt=altFor(c,l.pid),fl=[];
+    if(Object.keys(x.waiver).length)fl.push('MOQ waiver');if(ids.some(s=>c.quotes[s][l.pid].sample==='Conditional'))fl.push('Conditional sample');if(ids.some(s=>devFor(c,s,l.pid)))fl.push('Declared deviation');const lo=lowestLanded(c,l.pid);if(lo&&ids[0]!==lo)fl.push('Not lowest landed');
+    return`<tr><td><b>${l.pid}</b><div class="mut sm">${esc(prod(l.pid).name)}</div></td><td>${ids.map(s=>`<div><b>${esc(supOf(s).name)}</b><div class="mut sm">${n0(x.alloc[s])} ${prod(l.pid).uom} @ ${usd3(c.quotes[s][l.pid].price)}</div></div>`).join('')}</td><td class="r">${usd(est)}</td><td>${alt?`<span class="sm">${esc(alt.s.name)}</span><div class="mut sm">${usd(landed(alt.q))} landed</div>`:'<span class="mut sm">None eligible</span>'}</td><td class="sm">${esc(x.just)||'Lowest landed cost'}</td><td>${fl.map(f=>pill(f,'p-warn')).join(' ')||'—'}</td></tr>`}).join('');
+  const can_=cnt.pend===0&&!c.csLocked&&A.status!=='approved';
+  return{t:'Final Recommendation',sub:'A preferred supplier with written rationale and an alternative, for every product. This package goes to Marketing, Finance and ED.',crumbs:[['Command Center','home'],['Negotiation & Awards','aw.neg'],'Final Recommendation'],acts:`<span class="pill p-acc">${esc(c.id)}</span>`,
+   html:`${flowBar(c,'aw.rec')}${kpiRow([['Material value',usd(sum(aw,x=>x.amt)),{sub:'USD'}],['Est. landed',usd(sum(aw,x=>x.est))],['Suppliers',uniq(aw.map(x=>x.sid)).length],['Negotiated savings',savings(c)?usd(savings(c)):'—',{sub:'material only'}],['Pending products',cnt.pend,{cls:cnt.pend?'warn':'ok'}]])}
+   <div class="card tbl" style="margin-top:12px"><div class="tw"><table><thead><tr><th>Material</th><th>Recommended supplier</th><th class="r">Est. landed</th><th>Alternative</th><th>Rationale</th><th>Flags</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+   <div class="card cp" style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1"><b>${A.status==='none'?'Not submitted':A.id+' v'+A.version+' · '+A.status}</b><div class="mut sm">${can_?'Submit for sequential approval: Marketing ACK → Finance APP → ED final APP. The comparative statement locks as an immutable decision pack.':c.csLocked?'Package is in approval.':'Complete every product in the comparative statement first.'}</div></div>${c.csLocked||A.status==='approved'?`<button class="btn" data-go="aw.appr">Open approvals</button>`:`<button class="btn pri" ${can_?'':'disabled'} data-act="awSubmitForm">Submit for approval…</button>`}</div>`};
+};
+ACT.awSubmitForm=()=>{
+  if(!need('cs.submit'))return;const c=C();if(!rfqClosed(c))return toast('RFQ must be closed (deadline, revoke or cut-off) before submitting for approval.','warn');
+  const bad=c.booking.lines.filter(l=>csStat(c,l.pid)!=='Excluded'&&needsJust(c,l.pid)&&!csOf(c,l.pid).just.trim());if(bad.length){UI.csPid=bad[0].pid;go('src.cs');return toast(`Justification required for ${bad.map(b=>b.pid).join(', ')}.`,'warn')}
+  if(!lineAwards(c).length)return toast('Nothing is awarded.','warn');
+  openDlg('Submit award recommendation',`<div class="fg">${F('s','Procurement summary / rationale','textarea',c.appr.summary||'',{req:1,cls:'full',rows:3})}</div><div class="alert info" style="margin-top:10px"><div class="t">The CS locks as an immutable decision pack (version + checksum). You cannot self-approve — Marketing, Finance and ED act in sequence.</div></div>`,{act:'awSubmit',ok:'Submit for approval'})};
+ACT.awSubmit=o=>{const c=C();submitAward(c,null,o.s);save();closeDlg();toast('Award package submitted → Marketing ACK');go('award/'+c.id)};

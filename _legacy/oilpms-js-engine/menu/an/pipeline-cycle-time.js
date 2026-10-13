@@ -1,0 +1,6 @@
+PAGES['an.pipe']=()=>{
+  const dd=(a,b)=>a&&b?((b-a)/DAY).toFixed(1)+' d':'—';
+  const rows=DB.cases.map(c=>{const subs=c.inv.filter(i=>i.submitted).map(i=>i.submittedAt),lastQ=subs.length?Math.max(...subs):null,sent=c.inv.length?Math.min(...c.inv.map(i=>i.sentAt)):null,ed=c.appr.ed&&c.appr.ed.at,po=c.pos.filter(p=>p.sentAt).map(p=>p.sentAt),fp=po.length?Math.min(...po):null;return{id:c.id,c,created:c.created,book:c.booking.at,sent,lastQ,ed,fp}});
+  return{t:'Pipeline & Cycle Time',sub:'Measured elapsed time between stages for each case. Targets are not supplied — none are shown.',crumbs:[['Command Center','home'],['Reports','an.perf'],'Pipeline & Cycle Time'],
+  html:table('pipe',[{k:'id',t:'Case',r:r=>`<b>${r.id}</b>`},{k:'st',t:'Stage',r:r=>caseBadge(r.c),s:r=>caseStatus(r.c)},{k:'a',t:'Case → booking',cls:'r',r:r=>dd(r.created,r.book)},{k:'b',t:'Booking → RFQ sent',cls:'r',r:r=>dd(r.book,r.sent)},{k:'c',t:'RFQ → last quote',cls:'r',r:r=>dd(r.sent,r.lastQ)},{k:'d',t:'Quotes → ED approval',cls:'r',r:r=>dd(r.lastQ,r.ed)},{k:'e',t:'Approval → PO sent',cls:'r',r:r=>dd(r.ed,r.fp)},{k:'t',t:'Case → PO sent',cls:'r',r:r=>`<b>${dd(r.created,r.fp)}</b>`}],()=>rows,{key:r=>r.id,row:r=>'case/'+r.id})};
+};

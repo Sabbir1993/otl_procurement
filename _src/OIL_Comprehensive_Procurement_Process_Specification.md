@@ -1,0 +1,720 @@
+# Osman Interlinings Limited (OIL)
+## Comprehensive Procurement Process & Automation Specification
+
+**Document ID:** OIL-PMS-BRD-001  
+**Version:** 1.0 — Proposed / For Review  
+**Date:** 11 October 2026  
+**Process owner:** Procurement Department  
+**Stakeholders:** Marketing, Store, Quality Assurance (QA), Procurement, Finance & Accounts, Import/Logistics, Executive Director (ED) / Delegated Final Approver, Suppliers, IT  
+**System name (proposed):** OIL Procurement Management System (OIL-PMS)
+
+> **Purpose.** Define an end-to-end, auditable, software-ready workflow for procuring interlining raw materials at OIL. This is a *proposed target-state process*, not an assertion that every policy or approval limit has already been adopted. Policy choices requiring confirmation are identified in Section 17.
+
+---
+
+## 1. Executive summary
+
+OIL-PMS will centralize purchase requisitions, consolidate compatible requirements, solicit supplier quotes using expiring secure links, collect structured commercial/technical offers, record sample-testing results, compare and negotiate bids, obtain Marketing acknowledgment and Finance/ED approvals, and automatically generate and email a Purchase Order (PO) following final approval. The process continues through supplier acknowledgment, Proforma Invoice (PI) validation, import execution, goods receipt, invoice matching, and payment closure.
+
+**Target outcomes:** (1) process discipline and traceability, (2) informed, quality-compliant supplier selection, (3) competitive landed-cost procurement, (4) faster cycle time, and (5) real-time management visibility.
+
+**Key design rules:**
+
+1. Every request and transaction has a unique identifier and responsible owner.
+2. Every invited supplier receives an individual, restricted RFQ URL—not a shared open quotation page.
+3. RFQ deadlines use the supplier-country calendar, initially **China (Asia/Shanghai, UTC+08:00)**, including official holidays and adjusted make-up working days.
+4. Supplier quotes remain confidential from competing suppliers; commercial information is released internally by role and evaluation stage.
+5. Sample/technical compliance is independently recorded before award; an authorized waiver is documented where testing is not required.
+6. Marketing **ACK** is an acknowledgment, Finance **APP** is financial approval, and ED/delegated authority provides **final approval**.
+7. PO email is automatic **only after** final approval, PO completeness checks, and a valid supplier email address.
+8. PO/PI variations must be detected, documented and, when material, reapproved.
+
+---
+
+## 2. Scope and boundaries
+
+### In scope
+- Domestic or overseas purchases of interlining-related raw materials, with overseas/import sourcing as the primary reference flow.
+- Requirements raised by Marketing or Store; consolidation and procurement validation.
+- Supplier shortlist, RFQ, supplier data entry, secure submissions and reminders.
+- Technical/quality evaluation and sampling, supplier comparison, negotiation and approval.
+- Auto-PO generation, supplier acknowledgment, PI checking, shipment, GRN, supplier invoicing and settlement.
+- Reporting, document repository, notifications, role-based access and audit evidence.
+
+### Separate or conditional branches
+- **Domestic purchase:** may bypass LC/TT and customs steps while retaining PO, receipt, QA, three-way match and payment.
+- **Repeat/approved material:** technical testing may be waived under an approved, logged rule.
+- **Single-source/emergency purchase:** requires documented justification and approval; cannot silently bypass governance.
+- **Services or capital purchases:** may require separate field templates and approval policies.
+
+---
+
+## 3. End-to-end numbered workflow (23 stages)
+
+```mermaid
+flowchart TD
+  A[01 Requisition] --> B[02 Consolidation] --> C{03 Validation}
+  C -->|Return| A
+  C -->|Accept| D[04 RFQ Preparation] --> E[05 Supplier Shortlist]
+  E --> F[06 Unique Secure Links] --> G[07 Automatic RFQ Emails]
+  G --> H[08 Supplier Quote Entry] --> I{09 Deadline / Submission Control}
+  I -->|Valid submission| J[10 Comparative Statement]
+  I -->|Expired| X[Close link or approve extension]
+  X -->|Extension granted| H
+  J --> K[11 Sampling and Testing] --> L{12 Technical Acceptance}
+  L -->|Fail| J
+  L -->|Pass / Approved waiver| M[13 Negotiation] --> N[14 Award Recommendation]
+  N --> O{15 Marketing ACK}
+  O -->|Return| M
+  O -->|ACK| P{16 Finance APP}
+  P -->|Return / reject| M
+  P -->|Approve| Q{17 ED Final APP}
+  Q -->|Return / reject| M
+  Q -->|Approve| R[18 Auto-generate PO]
+  R --> S[19 Validate and Email PO] --> T{20 Supplier PO ACK}
+  T -->|Dispute| M
+  T -->|Accepted| U[21 Receive and Validate PI]
+  U -->|Mismatch| Y[Clarification / Change Request]
+  Y --> U
+  U -->|Matched| V[22 Import / Shipment / GRN]
+  V --> W[23 Invoice Match and Payment Closure]
+```
+
+### Sequential stage register
+
+| No. | Stage | Primary owner | Input / trigger | Mandatory result / hand-off |
+|---|---|---|---|---|
+| 01 | Purchase requisition | Marketing / Store | Material requirement | Draft/submitted PR with item, quantity, required date, reason and attachment |
+| 02 | Requisition consolidation | Procurement | Submitted PRs | Grouped demand preserving original PR and department references |
+| 03 | Requisition verification | Procurement reviewer | Consolidated demand | Verified/returned requisition; specification and stock checks |
+| 04 | RFQ preparation | Procurement | Verified demand | Numbered RFQ with item specification, response terms and deadline policy |
+| 05 | Supplier selection | Procurement | RFQ ready | Eligible shortlist from supplier master, with sourcing justification |
+| 06 | Secure link generation | System | Published RFQ + suppliers | Unique supplier-bound tokens and per-supplier deadlines |
+| 07 | RFQ invitation email | System | Valid links | Logged emails with RFQ instructions, due date and URL |
+| 08 | Supplier quotation entry | Supplier | Open link | Structured offer, documents, sample commitment and supplier declaration |
+| 09 | Deadline/submission control | System | Supplier submit/timeout | Timestamped submission or closed/extended RFQ |
+| 10 | Comparative statement (CS) | System / Procurement | Valid received quotations | Comparable bid matrix; normalization and omissions clearly identified |
+| 11 | Sample collection and test | QA / Marketing | Sample required | Sample register and test report with evidence |
+| 12 | Technical acceptance decision | QA / Marketing | Completed technical assessment | Pass / fail / approved waiver, with reasons |
+| 13 | Commercial negotiation | Procurement | Technically qualified offers | Versioned negotiated terms and negotiation log |
+| 14 | Supplier award recommendation | Procurement | Final offers + evaluations | Justified recommendation and final CS |
+| 15 | Marketing acknowledgment | Marketing | Recommendation | ACK / return with recorded remarks |
+| 16 | Finance approval | Finance & Accounts | Marketing ACK | Approve / return / reject based on budget, exposure and landed cost |
+| 17 | ED/final approval | ED / delegated authority | Finance approval | Final approval or documented return/rejection |
+| 18 | Automatic PO creation | System | Final approval | Unique PO number, frozen approved terms and generated PDF |
+| 19 | Automatic PO email | System | PO validation passed | Sent PO PDF, message log, delivery-failure tracking |
+| 20 | Supplier PO acknowledgment | Supplier | PO email/secure link | Accepted or disputed PO with timestamp |
+| 21 | PI receipt and verification | Procurement / Import / Finance | Supplier PO acceptance | PO–PI comparison; resolved exceptions |
+| 22 | Import, shipment and GRN | Import / Store / QA | Verified PI and shipping | Shipping/customs records, GRN, receiving quality outcome |
+| 23 | Invoice matching and settlement | Finance & Accounts | GRN + vendor invoice | Controlled payment, reconciliation and case closure |
+
+### Common status rules
+- **Return** sends the file to a named prior owner with a mandatory reason; returned items never appear as approved.
+- **Reject** ends the current approval attempt; resubmission requires a revision or newly approved exception.
+- **Cancel** is a separately authorized end state with reason and audit history.
+- **Change after approval** triggers a versioned change request and re-approval per authority matrix, never an invisible overwrite.
+
+---
+
+## 4. Detailed process instructions and validation gates
+
+### 01 — Requisition creation
+**Actions:** Marketing or Store selects RM item/specification (or proposes a new item), requested quantity/UOM, desired delivery date, delivery location, business justification, intended use, urgency and attachments.  
+**Checks:** mandatory-field completeness; user authorization; active item master; duplication warnings; available stock and pending PO visibility.  
+**Output:** `PR-YYYY-NNNNN`; status `Submitted`.  
+**Exception:** missing specifications return to originator; urgency flag does not bypass approval.
+
+### 02 — Consolidation
+**Actions:** Procurement views open PRs together and groups compatible demand by item, technical specification, shipment window and delivery location; optionally splits a PR across RFQs.  
+**Checks:** preserve original PR-to-line mapping and quantities; prevent double allocation; separate incompatible specifications.  
+**Output:** consolidated demand batch with traceability to all origin PRs.
+
+### 03 — Procurement verification
+**Actions:** validate specifications, quantity, stock, open orders, supplier feasibility, intended procurement route and requirement date.  
+**Decision:** `Validated` or `Returned` with reason.  
+**Control:** reviewer should not silently alter approved technical specifications.
+
+### 04 — RFQ preparation
+**Actions:** define line items, required specs, bid currency/unit, target quantity, delivery location, quality documents, sampling requirement, bid cutoff and quotation conditions.  
+**Output:** `RFQ-YYYY-NNNNN`, version `V1`, status `Ready to Publish`.  
+**Control:** change after publish issues an RFQ revision and notifies relevant suppliers.
+
+### 05 — Supplier shortlist
+**Actions:** choose active and eligible manufacturers/traders, vendor-country calendar and verified email contacts; document single-source situations.  
+**Checks:** tax/business registration where required, sanction/compliance checks under company policy, previous performance and supplier status.  
+**Output:** invited supplier list with invitation eligibility and rationale.
+
+### 06 — Per-supplier secure URL generation
+**Actions:** create a random, high-entropy, supplier-specific token bound to RFQ/version/vendor; store a hash server-side; provide individual access to only that vendor's RFQ.  
+**Controls:** HTTPS, token expiry, rate limits, access logs, revocation, no competitor visibility, and optional one-time email verification/OTP. Never include sensitive prices in URL parameters.  
+**Output:** expiring submission link per recipient.
+
+### 07 — Automated invitation
+**Actions:** send branded invitation with subject, RFQ details, due time in supplier timezone, instructions and secure link.  
+**Checks:** supplier email validation, queued/sent/failed status, retry with idempotency (avoid duplicate invitations).  
+**Output:** transmission log and copy of email.
+
+### 08 — Supplier RFQ submission
+**Actions:** supplier confirms company/contact information, enters line-wise offer and technical details, uploads documents and samples schedule, saves draft, then signs declaration and submits.  
+**Checks:** required fields, numeric ranges and units, allowed document types, antivirus scanning, supplier-country/timezone, version and RFQ deadline.  
+**Output:** immutable submitted quotation revision, `QUO-YYYY-NNNNN`. Drafts are not evaluated.
+
+### 09 — Deadline control
+**Actions:** check server receipt timestamp against calculated deadline; send reminder; disable final submission at cutoff unless extension is approved.  
+**Output:** `Submitted on Time`, `Not Submitted / Expired`, or `Extended`.  
+**Control:** authoritative server time, not browser/device clock; extension reason, approver and notifications are recorded.
+
+### 10 — Comparative statement
+**Actions:** compare supplier quotes line by line, normalize currency and UOM using dated controlled FX assumptions, compare Incoterms on a defined landed-cost basis, show technical compliance and blanks.  
+**Control:** lowest unit price is *not* automatically the lowest total landed cost; disclose estimations separately from supplier-confirmed figures.  
+**Output:** versioned CS, supplier comparison and shortlist for testing/negotiation.
+
+### 11 — Sample collection and testing
+**Actions:** request and track samples, courier/AWB, receipt, lab test plan, controlled result uploads, appearance, fusing/bond strength and other item-specific tests.  
+**Output:** sample/test ID, test result and supporting report.  
+**Exception:** approved sample waiver or alternate evidence must have its own authorization.
+
+### 12 — Technical acceptance
+**Actions:** QA/Marketing determines `Pass`, `Conditional Pass`, `Fail` or `Waived by Approval` against documented tolerance/specification.  
+**Control:** conditional pass cannot be treated as a full pass without an approved deviation.  
+**Output:** technical clearance for negotiation/award; rejected offers remain archived.
+
+### 13 — Negotiation
+**Actions:** track negotiation rounds for price, discounts, MOQ, payment, shipment, packing, Incoterms and quality undertakings; request formal revised quotation where material.  
+**Controls:** immutable original quotation, revision numbers, maker/checker rights and audit log.  
+**Output:** agreed commercial terms, without discarding old quote versions.
+
+### 14 — Supplier recommendation
+**Actions:** Procurement prepares final CS, technical summary, total estimated landed cost, risk notes, negotiation savings and recommended vendor with written rationale.  
+**Output:** supplier award recommendation package for sequential acknowledgment/approval.
+
+### 15 — Marketing ACK
+**Review:** fit to requested materials, operational need, quantities, approved sample/QA outcome and delivery suitability.  
+**Action:** `Acknowledge` or `Return for Clarification`; acknowledgment is not the final financial approval.
+
+### 16 — Finance approval
+**Review:** budget availability, cash requirements, FX exposure, duties/freight assumptions, bank charges, payment terms, advance/LC exposure, landed cost and supporting justification.  
+**Action:** `Approve`, `Return` or `Reject`; where approval thresholds apply, system enforces them.  
+**Output:** timestamped decision and finance comments.
+
+### 17 — ED / final approval
+**Review:** end-to-end award case, supplier recommendation, prior approvals, deviations and material exposures.  
+**Action:** `Final Approve`, `Return` or `Reject`; delegation must be documented.  
+**Control:** final approval locks supplier, quantity, rates, currency, Incoterms, payment and shipment commitments for PO production.
+
+### 18 — Automated PO generation
+**Actions:** generate `PO-YYYY-NNNNN` directly from approved fields, attach terms and technical annexures, create versioned PDF and archive a checksum/snapshot.  
+**Validation:** vendor email; ship-to/bill-to; UOM/qty; price/currency; tolerance; payment; delivery; Incoterms named location; signatures or approval reference.  
+**Output:** `Ready to Dispatch`; validation failures go to a correction queue rather than sending an incomplete PO.
+
+### 19 — Automated PO distribution
+**Actions:** email PDF and secure acknowledgment URL to selected supplier after validation; log send result; retry technical failures without duplicate PO numbers.  
+**Output:** `PO Sent` with notification ID/time or `PO Delivery Failed` alert to Procurement.
+
+### 20 — Supplier acknowledgment
+**Actions:** supplier opens link, accepts PO or flags a specific discrepancy.  
+**Controls:** supplier cannot modify PO; dispute creates a change-request task, with possible reapproval.  
+**Output:** `Accepted`, `Disputed`, or `Awaiting Acknowledgment` with reminder and escalation rules.
+
+### 21 — Proforma Invoice validation
+**Actions:** collect PI from supplier and compare seller/buyer, material/specs, HS code where available, quantity, unit price, total, currency, Incoterms/place, shipping schedule, payment and bank details.  
+**Controls:** vendor bank details change requires independent verification; differences create documented exceptions; no silent acceptance of mismatched commercial terms.  
+**Output:** `PI Matched / Approved for Import Processing` or correction request.
+
+### 22 — Import, shipment and GRN
+**Actions:** apply applicable bank/LC/TT process, track import authorization and documents, expected/actual shipment, packing list, commercial invoice, transport documents, customs clearance, arrival, quantity received, QA inspection and warehouse posting.  
+**Exceptions:** partial shipment, late dispatch, short/over receipt, damage, nonconforming goods, insurance claim, supplier debit/credit note.  
+**Output:** GRN and receiving discrepancy records, updated stock and financial liabilities where appropriate.
+
+### 23 — Invoice match, payment and closure
+**Actions:** match PO, GRN, accepted quantity and invoice; check advances, taxes/duties, deductions and debit notes, obtain payment authorization; process and reconcile bank payment.  
+**Controls:** three-way match and segregation of duties; prevent duplicate invoice/payment; release only approved/eligible amounts.  
+**Output:** payment reference, reconciled supplier balance and closed PO when open commitments are resolved.
+
+---
+
+## 5. Supplier portal: comprehensive data dictionary
+
+**Field types:** `R` required for relevant RM category; `C` conditional; `O` optional. The RFQ issuer configures exact mandatory fields per material family and quotation item. All rates/quantities must be line-specific where multiple materials are quoted.
+
+| Section | Field / parameter | Typical type | Rule / purpose |
+|---|---|---|---|
+| Identity | Legal supplier name, country, registered address | R | Pre-filled where vendor master exists; confirm changes |
+| Identity | Manufacturer or trader; actual manufacturing site | R | Support source traceability |
+| Contact | Contact name, designation, email, phone | R | PO routing / clarification |
+| Reference | Supplier quotation reference and date | R | Quote version evidence |
+| Commercial | Currency, unit price, quote unit, quoted quantity | R | Correct UOM and price normalization |
+| Commercial | Tiered quantity price, discount/rebate | C | Compare alternate quantities |
+| Commercial | Minimum order quantity (MOQ) | R | Supply feasibility |
+| Commercial | Quotation validity date | R | Flag expiry before award |
+| Commercial | Payment method and detailed terms | R | LC sight/usance; TT advance/balance; credit days |
+| Commercial | Bank charges allocation | C | Real landed-cost and payment comparison |
+| Logistics | Incoterms **2020 rule and named place/port** | R | `FOB Shanghai Port`, `CIF Chattogram Port`, etc. |
+| Logistics | Port of loading; discharge/destination | R for import | Shipment planning |
+| Logistics | Production lead time, ready-to-ship date | R | Separate from ocean/air transit estimate |
+| Logistics | Shipment lead time / dispatch commitment | R | Quote basis and schedule |
+| Logistics | Partial shipments / transshipment permitted | C | Import document control |
+| Logistics | Origin country and HS code proposed | C | Customs planning; verify independently |
+| Logistics | Estimated gross/net weight and CBM | C | Freight estimate |
+| Packing | Roll length, roll count, package type | C | Varies by material |
+| Packing | Carton/bale dimensions, labeling | C | Warehouse receiving controls |
+| Technical | Material family / grade / supplier product code | R | Technical matching |
+| Technical | Product composition / polymer or fiber percentage | R where applicable | E.g., PET, PA, PES or blended substrates |
+| Technical | GSM / basis weight, tolerance | R for fabric RM | g/m² and acceptable variance |
+| Technical | Usable width and tolerance | R for roll goods | cm/inches; conversion and tolerance |
+| Technical | Base fabric construction | C | Nonwoven / woven / knitted, structure/bonding method |
+| Technical | Coating resin type | C | PA/PES/PE/EVA or other; validate suitability |
+| Technical | Coating weight / dot density | C | Relevant for coated or fusible material |
+| Technical | Fusing temperature, time and pressure | C | Supplier recommendation + test limits |
+| Technical | Peel / bond strength and method | C | Include units, conditioning, test method |
+| Technical | Shrinkage / dimensional stability | C | Length/width and test method |
+| Technical | Color / shade / whiteness | C | Match approved specification |
+| Technical | Hand feel / stiffness / thickness | C | Where end-use performance requires |
+| Technical | Thermal/chemical stability | C | Applicable to specific resin/chemical inputs |
+| Technical | Adhesive powder: particle size/melt characteristics | C | For powder RM rather than finished cloth |
+| Technical | Chemical: viscosity, solids content, pH, shelf life | C | For coating agents/resins, only when relevant |
+| QA documents | Technical Data Sheet (TDS), Certificate of Analysis (COA) | R where specified | File/date/version and material batch reference |
+| QA documents | Test report / compliance certificate / SDS | C | SDS for chemical RM; standards when requested |
+| Sample | Sample availability, quantity, dispatch date | R | Supports timely qualification |
+| Sample | Sample cost and freight payer | C | Commercial clarity |
+| Sample | Courier, AWB/tracking number, expected receipt | C | Required when dispatched |
+| Performance | Production capacity / stock available | C | Supply continuity |
+| Performance | Claims, replacement, warranty policy | R | Defects/rejections allocation |
+| Declaration | Compliance with RFQ specs / exception list | R | Explicit deviations rather than silent acceptance |
+| Declaration | Authorized name, timestamp and acceptance | R | Digital submission record |
+
+**User interface requirements:** grouped tabs (`Company`, `Commercial`, `Technical`, `Delivery & Packing`, `Sample & Documents`, `Review & Submit`); item-wise specification template; inline validation; controlled dropdowns and units; save draft; attachments; printable submission receipt; revision history; mobile-friendly layout; supplier-specific language/timezone labels.
+
+**Recommended file controls:** permitted PDF/XLSX/JPG/PNG for appropriate uses; configurable size limits; malware scanning; download authorizations; virus/quarantine outcome logging.
+
+---
+
+## 6. China RFQ deadline engine and secure link expiry
+
+**Default business policy proposal:** standard RFQ = **3 China working days**; urgent RFQ = **2 China working days**, with authorized reason; counting begins from the **next China working day after invitation/publish**; close at **17:00 China Standard Time (Asia/Shanghai)** on the last counted working day. These values should be configuration, not hard-coded policy.
+
+1. Confirm supplier's country and assigned work calendar (`CN` by default for China-based supplier).
+2. Calendar includes Chinese public holidays **and officially designated weekend make-up workdays**; yearly source data are maintained/verified by an administrator before use.
+3. Convert all local display times to/from a UTC database timestamp; China CST here means **China Standard Time**, not US Central Standard Time.
+4. Calculate `closing_date = Nth eligible working date after RFQ issue date` under the proposed counting convention; apply configured closing hour.
+5. Display exact deadline in China time and OIL/Bangladesh time, with timezone name and UTC offset.
+6. Send reminder, proposed **one China working day before close** to non-submitters.
+7. At cutoff, revoke final-submit ability; preserve already submitted records; drafts remain historical but unsubmitted.
+8. Authorized extension requires revised due date, explanation and approver; notify supplier of the change and record original deadline.
+9. If country differs from China, use corresponding approved country calendar; do not assume a global Monday–Friday calendar.
+10. If holiday/calendar feed is unavailable, **block uncertain deadline publication and alert Procurement** instead of silently computing a possibly wrong cutoff.
+
+**Example (illustrative, not a live computed statutory-calendar deadline):** If a China supplier is invited on a Monday and Tuesday–Thursday are confirmed working days, a three-working-day response closes Thursday at 17:00 China time (15:00 Bangladesh time). An official holiday or make-up working day may change this calculation.
+
+### Link security and submission states
+`Invitation queued → Sent → Viewed → Draft started → Submitted` OR `Not submitted → Expired` OR `Deadline extended → Submitted`. Token theft mitigation should include token hashing, short-lived or vendor-bound validation, HTTPS, rate limits, optional email OTP, and sensitive action logging. The supplier must never view other suppliers' bids.
+
+---
+
+## 7. Comparative statement and supplier scoring
+
+### Mandatory comparison dimensions
+- Price **per normalized UOM** and quoted currency; FX source/date; total offer price.
+- Estimated freight, insurance, bank charges, customs/tax and inland costs, if applicable, shown as *estimated* until confirmed.
+- Incoterms/named port, payment terms, working capital requirements and quote validity.
+- Specifications and test compliance, sample status, MOQ, available stock, production/dispatch timing.
+- Vendor history: delivery reliability, quality complaints/replacement responsiveness, capacity and documentation performance.
+- Deviations to spec, quality and commercial conditions, and unresolved risks.
+
+### Suggested decision logic (policy subject to approval)
+1. **Gate 1: Eligibility** — active/compliant supplier, quote received by valid deadline.
+2. **Gate 2: Technical qualification** — tested pass or formally approved deviation/waiver.
+3. **Gate 3: Commercial comparison** — landed cost, payment exposure and on-time supply.
+4. **Gate 4: Procurement recommendation** — preferred supplier with rationale and alternative.
+5. **Gate 5: Sequential approval** — Marketing ACK → Finance APP → ED/Final APP.
+
+A sample optional weighted score is **Cost 35%, Technical & Quality 30%, Delivery 20%, Commercial Terms 10%, Supplier History 5%**; *these percentages are illustrative only*, must be approved before deployment and cannot override mandatory QA rejection gates.
+
+**Negotiated savings:** where meaningful, show `(baseline comparable landed cost − final comparable landed cost)` separately from budget savings. Keep exchange-rate effects and quantity changes visible rather than incorrectly attributing them to negotiation.
+
+---
+
+## 8. Approval authority and change governance
+
+| Sequence | Approval | Primary decision | Evidence expected | Return path |
+|---|---|---|---|---|
+| 15 | Marketing ACK | Need/quantity/spec/sample suitability | PR, technical result, CS, proposed delivery | Procurement negotiation / QA |
+| 16 | Finance APP | Affordability, cost, exposure, payment terms | Landed-cost sheet, budget, FX, LC/TT/advance implications | Procurement for revision |
+| 17 | ED / delegated final APP | Final commercial award authority | Full award pack, deviation register, prior approvals | Procurement / Finance as relevant |
+
+**Mandatory workflow principles:** one named accountable reviewer per step; delegated authority only under maintained matrix; no self-approval where segregation applies; decision remarks; timestamp; no skip without authorized policy exception; stepwise notification and escalation; immutable version of decision pack; supplier, unit price, currency, ordered qty, Incoterms, payment terms, delivery commitment and significant quality deviations are tracked as **material changes** requiring review/reapproval.
+
+**Approval financial limits** and alternate approvers are **TBD by OIL**. The system should store thresholds as configurable rules rather than assume a BDT amount.
+
+---
+
+## 9. Purchase Order, supplier acknowledgment and PI rules
+
+### PO content checklist
+PO number/date; buyer legal name **Osman Interlinings Limited (OIL)** and address; supplier legal details/contact; delivery and invoice addresses; originating PR/RFQ/quote IDs; material code/description/technical annex; quantity/UOM/tolerance; unit and extended amount; currency/tax assumptions; Incoterms 2020 named place; shipment schedule and loading/discharge port; packing/marking; sample/quality acceptance standard; payment and banking terms; claims/replacement provisions; required trade documents; approved internal reference; supplier acknowledgment instructions.
+
+### Automatic dispatch conditions
+`Final approval = valid` AND `PO source version = final approved version` AND `required fields complete` AND `supplier email verified` AND `no unresolved blocking deviations` → create approved PDF → enqueue email → log message ID → track send/delivery error. **Never regenerate a different legal PO under the same identifier without a revision.**
+
+### PO acknowledgment and PI
+Supplier selects `Accept` or `Dispute` on secure URL. The system records time and identity. PI must match buyer/seller identities, description/specification, quantities, price, totals, currency, shipping window, Incoterms place, payment terms and beneficiary bank details. Discrepancies create a change request; changes to approved commercial fundamentals route back for authorized review.
+
+---
+
+## 10. Import, receiving and payment lifecycle
+
+**Import sub-process:** validated PI → import documentation/banking checks → LC/TT/advance approval per policy → shipment booking/confirmation → production milestone tracking → supplier dispatch document set → transit/ETA tracking → customs clearance and duty/tax documentation → delivery to OIL → GRN and QA receiving report → supplier invoice matching → payment/advance adjustment → order closure.
+
+**Potential documents:** PI, commercial invoice, packing list, transport document (BL/AWB as appropriate), certificate of origin when required, insurance evidence, LC/TT documents, import permission/customs documentation, test certificate/COA, GRN and supplier credit/debit note. Exact mandatory document rules depend on import method and applicable regulations; Finance/Import must validate them.
+
+**Exception handling:** partial shipment, over/short receipt, wrong specification, failed QA, late delivery, damaged goods, missing shipping papers, demurrage, exchange-rate change, invoice mismatch and duplicate invoicing each create an exception case with assignee, root cause, corrective action and closure approval.
+
+**Three-way match:** PO ↔ GRN/accepted quantity ↔ Supplier invoice. Material deviations block or partially restrict payment until resolution. Paid amount, advance balances, deductions and remaining PO commitments should reconcile.
+
+---
+
+## 11. Automated communications: event matrix
+
+| Event | Recipient | Automation | Key rule |
+|---|---|---|---|
+| RFQ published | Invited supplier | RFQ email with individualized link | Record send status |
+| Deadline approaching | Suppliers not yet submitted | Reminder | Suggested 1 supplier-country working day prior |
+| Supplier submits | That supplier + Procurement | Confirmation and internal notification | Keep confidential |
+| Deadline reached | Procurement; optional supplier closure notice | Close submissions | No late silent overwrites |
+| Deadline extended | Affected supplier | Revised deadline email | Authorized and logged |
+| All bids collected / RFQ closed | Procurement | CS preparation alert | Include missing supplier indicators |
+| Test completed | Procurement / Marketing | QA outcome notice | Block failed offer |
+| Approval task assigned | Marketing / Finance / ED | Action email / in-app notification | Role-specific access |
+| Approval overdue | Approver / escalation owner | Escalation | Rule configurable |
+| Final approval recorded | Procurement + system PO service | Auto-PO validation / dispatch | No send on failed checks |
+| PO sent | Selected supplier | Official PO email + PDF | Track failed delivery |
+| PO acknowledgment overdue | Selected supplier + Procurement | Reminder/escalation | Acknowledgment SLA TBD |
+| Supplier disputes PO | Procurement | Exception alert | Changes require governance |
+| PI uploaded | Procurement / Import / Finance | Validation task | PO comparison required |
+| Shipment delayed / ETA changed | Import, Store, Procurement | Exception notice | Threshold configurable |
+| GRN completed / invoice mismatch | Finance / Procurement / QA | Payment readiness or exception | Three-way match |
+
+---
+
+## 12. Copy-ready email formats
+
+All placeholders in braces are populated from validated master/transaction data. Automated messages should come from an official OIL sender address and be archived alongside the related RFQ/PO. Attachments and hyperlinks must be access controlled.
+
+### Template A — Automated RFQ invitation
+**Subject:** Request for Quotation — {RFQ_NUMBER} | Osman Interlinings Limited (OIL)
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+Greetings from Osman Interlinings Limited (OIL).
+
+We invite your quotation for **{MATERIAL_NAME}** against RFQ **{RFQ_NUMBER}** for **{QUANTITY} {UOM}**. Kindly submit your pricing, Incoterms and named place, payment terms, material specifications, quality data, production/shipment lead time, sample arrangements and supporting documents through your secure supplier link.
+
+**Submission link:** {RFQ_LINK}  
+**Deadline:** {RFQ_DEADLINE_CHINA} (China Standard Time, UTC+08:00)  
+**Reference documents:** {ATTACHMENT_LIST}
+
+The link will automatically close at the stated deadline. Please complete all required fields and declare any deviation from our specification. Submission is an invitation to quote and does not constitute a purchase commitment.
+
+Best regards,  
+**Procurement Department**  
+**Osman Interlinings Limited (OIL)**  
+{CONTACT_EMAIL}
+
+### Template B — RFQ reminder
+**Subject:** Reminder — RFQ {RFQ_NUMBER} Closes on {RFQ_DEADLINE_CHINA}
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+This is a reminder that your quotation for **{MATERIAL_NAME}** under RFQ **{RFQ_NUMBER}** is due by **{RFQ_DEADLINE_CHINA} (China time)**.
+
+Please complete the submission through: {RFQ_LINK}. The secure link will expire at the deadline. If you have already submitted, please disregard this message.
+
+Best regards,  
+**Procurement Department | Osman Interlinings Limited (OIL)**
+
+### Template C — Supplier submission confirmation
+**Subject:** Quotation Received — RFQ {RFQ_NUMBER} / Submission {SUBMISSION_ID}
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+Thank you. We confirm receipt of your quotation submitted on **{SUBMITTED_AT}** for RFQ **{RFQ_NUMBER}**. Your submission reference is **{SUBMISSION_ID}**.
+
+**Status:** Received — under evaluation. This acknowledgment does not constitute supplier selection or PO acceptance.
+
+Best regards,  
+**Procurement Department | Osman Interlinings Limited (OIL)**
+
+### Template D — RFQ extension
+**Subject:** Revised RFQ Submission Deadline — {RFQ_NUMBER}
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+Please note that the submission deadline for RFQ **{RFQ_NUMBER}** has been extended to **{NEW_DEADLINE_CHINA} (China time)**.
+
+Your secure quotation link is: {RFQ_LINK}. Please ensure that all mandatory details and documents are submitted before the revised cutoff.
+
+Best regards,  
+**Procurement Department | Osman Interlinings Limited (OIL)**
+
+### Template E — RFQ closure
+**Subject:** RFQ Submission Closed — {RFQ_NUMBER}
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+The submission window for RFQ **{RFQ_NUMBER}** has closed at **{RFQ_DEADLINE_CHINA}**. The secure link is now inactive. Any request to extend or reopen an RFQ is subject to internal authorization.
+
+Thank you for your interest.
+
+Best regards,  
+**Procurement Department | Osman Interlinings Limited (OIL)**
+
+### Template F — Official PO issuance (automated after approval)
+**Subject:** Official Purchase Order — {PO_NUMBER} | Osman Interlinings Limited (OIL)
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+Following the completion of our internal evaluation and approval, Osman Interlinings Limited (OIL) is pleased to issue **Purchase Order {PO_NUMBER}**, dated **{PO_DATE}**, with the following summary:
+
+- Material: {MATERIAL_NAME}
+- Quantity: {QUANTITY} {UOM}
+- Total Order Value: {CURRENCY} {PO_TOTAL}
+- Incoterms & Named Place: {INCOTERMS_NAMED_PLACE}
+- Payment Terms: {PAYMENT_TERMS}
+- Agreed Shipment Date/Window: {SHIPMENT_COMMITMENT}
+
+The **official approved PO PDF is attached**. Please review the full terms and specifications, confirm acceptance at **{PO_ACK_LINK}**, and submit the corresponding Proforma Invoice (PI). Any discrepancy must be raised before confirmation.
+
+Best regards,  
+**Procurement Department**  
+**Osman Interlinings Limited (OIL)**  
+{CONTACT_EMAIL}
+
+**Attachment:** Purchase_Order_{PO_NUMBER}.pdf
+
+### Template G — PO acknowledgment reminder
+**Subject:** Action Required — Acknowledge PO {PO_NUMBER}
+
+Dear {SUPPLIER_CONTACT_NAME},
+
+Our records show that acknowledgment of **PO {PO_NUMBER}** remains pending. Please review the PO and confirm acceptance or report a discrepancy at: **{PO_ACK_LINK}**.
+
+Kindly submit the PI consistent with the approved PO terms.
+
+Best regards,  
+**Procurement Department | Osman Interlinings Limited (OIL)**
+
+### Template H — Internal approval assignment
+**Subject:** Procurement Approval Required — {REQUEST_ID} / {STAGE}
+
+Dear {APPROVER_NAME},
+
+An OIL procurement case requires your **{STAGE}** action.
+
+- Reference: {REQUEST_ID}
+- Material: {MATERIAL_NAME}
+- Recommended Supplier: {SUPPLIER_NAME}
+- Proposed Value: {CURRENCY} {AMOUNT}
+- Requested Action: {ACTION_LABEL}
+- Review Link: {INTERNAL_APPROVAL_LINK}
+
+Please review the supporting RFQ, CS, quality record and commercial justification, then approve, return or reject with comments as applicable.
+
+**OIL Procurement Management System**
+
+---
+
+## 13. Data entities, identifiers and document control
+
+| Entity | Identifier example | Key relationships / fields |
+|---|---|---|
+| Purchase requisition | `PR-2026-00001` | origin department, requester, lines and dates |
+| Consolidation batch | `CB-2026-00001` | PR line mapping, quantity allocations |
+| RFQ | `RFQ-2026-00001` | revision, expiry, invited supplier list |
+| Supplier | `SUP-00001` | contacts, addresses, status, bank verification |
+| Quotation | `QUO-2026-00001` | RFQ ID, supplier ID, revision, commercial/technical lines |
+| Sample | `SMP-2026-00001` | quotation line, courier, test and approval |
+| Comparative statement | `CS-2026-00001` | normalized offer versions, assumptions |
+| Negotiation round | `NEG-2026-00001` | original/revised commercial terms |
+| Award package | `AWD-2026-00001` | recommended supplier, cost and approval trail |
+| Purchase order | `PO-2026-00001` | frozen approval snapshot, PDF revision and send log |
+| Proforma invoice | `PI-2026-00001` | supplier PI reference, match exceptions |
+| Shipment | `SHP-2026-00001` | milestones, documents, port, ETA |
+| Goods receipt note | `GRN-2026-00001` | received/accepted/rejected quantities |
+| Supplier invoice | `INV-2026-00001` | PO/GRN references, taxes, match status |
+| Payment | `PAY-2026-00001` | authorization, bank reference, reconciliation |
+| Change/exception case | `EXC-2026-00001` | type, owner, severity, resolution, audit evidence |
+
+Every entity should store `created_by`, `created_at`, `updated_by`, `updated_at`, `status`, `revision`, and event history. Never physically overwrite legally significant submitted and approved documents without retaining prior versions.
+
+---
+
+## 14. Role-based access and segregation of duties
+
+| Role | Create/Edit | Review/Approve | Restricted actions |
+|---|---|---|---|
+| Marketing requester | Own requisitions; technical feedback | Marketing ACK if assigned | Cannot issue final PO |
+| Store requester/receiver | Own PR; GRN receipts | Receipt verification | Cannot approve supplier invoices independently |
+| Procurement executive | RFQs, supplier invites, CS, negotiations, recommendation | Workflow preparation | Cannot self-final-approve award |
+| Procurement supervisor | Validate sourcing/review | Assigned Procurement review | Cannot change final-approved PO silently |
+| Supplier | Only own RFQ response and PO acknowledgment | None internally | Cannot view rivals' bids, internal scoring or approvals |
+| QA/Technical | Sample/testing data | Technical pass/fail or waiver under authority | Cannot edit supplier bid price |
+| Finance & Accounts | Budget/cost/payment data | Finance APP and payment authorization per role | Cannot alter technical test results |
+| ED / final approver | Review package | Final supplier/award APP | Changes require documented amendment |
+| Import/Logistics | Shipping, PI checks, LC/TT documents | Operational verifications | Cannot bypass finance control |
+| System administrator | Configuration, roles and support | No commercial approvals by default | Privileged actions separately audited |
+| Internal audit / MD dashboard viewer | Read-only authorized reporting | None unless explicitly delegated | No transactional edits |
+
+---
+
+## 15. Dashboards, reports and management KPIs
+
+**Operational dashboard:** open PRs, upcoming deadlines, quotations pending, suppliers not responding, tests pending, negotiation queue, cases at each approval level, PO email delivery failures, PIs unmatched, late shipments, open GRNs and due vendor invoices.
+
+**Management dashboard:** total procurement value, approved vs pending orders, estimated landed cost by material/supplier, time from PR to RFQ, RFQ response rate, RFQ-to-PO cycle time, negotiated cost improvements, sample first-pass rate, supplier on-time delivery, rejection/claim rate, unacknowledged POs, import delays, payment aging and exception closure time.
+
+**Suggested formulas and definitions:**
+
+| KPI | Formula / definition |
+|---|---|
+| RFQ response rate | Quotations validly submitted ÷ suppliers invited × 100 |
+| PR-to-PO lead time | PO dispatch timestamp − initial approved PR submission timestamp |
+| On-time delivery | Deliveries by contractual date ÷ total deliveries due × 100 |
+| Sample acceptance rate | Samples accepted ÷ samples fully evaluated × 100 |
+| Quote-to-PO conversion | Awarded RFQs ÷ RFQs closed and evaluated × 100 |
+| PO acknowledgment SLA | Supplier ACK timestamp − PO email sent timestamp |
+| Three-way-match exception rate | Invoices with PO/GRN/invoice mismatch ÷ invoices checked × 100 |
+| Negotiated savings | Like-for-like comparable baseline cost − approved comparable final cost |
+
+Baseline historical data and target thresholds are **not supplied**; reporting must not present invented savings or performance percentages.
+
+---
+
+## 16. Non-functional, security and integration requirements
+
+- **Security:** role-based permissions, least privilege, HTTPS, encryption at rest as appropriate, MFA for internal approvers, supplier URL token protection, file scanning, session protections, per-action audit log, document integrity snapshots and backup/recovery procedures.
+- **Operational integrity:** event-driven email queue, delivery/retry log, idempotent automatic actions, clear error queues, system health monitoring and approval/task SLA alerts.
+- **Usability:** desktop-first internal portal and mobile-responsive supplier forms; English UI and supplier-ready wording; consistent identifiers; searchable document library; accessible error messages.
+- **Timekeeping:** UTC timestamp storage with Asia/Shanghai and Asia/Dhaka presentation; verified country-level working-day calendars and DST support for other supplier countries.
+- **Master data:** supplier, material/specification, UOM conversion, FX rate source/date, port, terms, approval authorities, China holiday calendar, notification templates and mandatory technical fields.
+- **Potential integrations:** inventory/ERP, accounting/AP, warehouse/GRN, email provider, document storage, bank/import register and BI dashboards. Integration targets and APIs are **TBD**.
+- **Record retention:** OIL-defined legal/document retention period, access controls, archiving and deletion schedule; subject to applicable regulatory requirements.
+- **Data quality:** mandatory code lists, duplicate checks, units, versioning, cross-checks and controlled import of supplier master data.
+
+---
+
+## 17. Exceptions, control rules and open policy decisions
+
+| Scenario | Expected system behavior | Owner / authority |
+|---|---|---|
+| No supplier submits in time | Close links; flag no-bid; re-tender/extension by authorization | Procurement approver |
+| Supplier requests late submission | Block unless exception approval, record original/extended cutoff | Authorized Procurement manager |
+| China holiday schedule unavailable | Halt uncertain deadline computation; request calendar verification | System admin / Procurement |
+| Supplier quote incomplete | Save draft; block final submit for mandatory fields | Supplier |
+| Only one responsive supplier | Record sole quote and justification, extra approval if policy requires | Procurement / Management |
+| Sample rejected | Mark quote ineligible, trigger clarification/re-sourcing | QA / Marketing |
+| Incoterms quoted without named location | Block completeness or flag hard exception | Procurement |
+| Post-submission quote revision | New version with timestamp; approval/visibility rules | Supplier / Procurement |
+| Material change after Finance/ED approval | Freeze send and route for reapproval | Finance / Final approver |
+| PO automatic email failed | Hold status, alert owner, safe retry and send audit | Procurement / IT |
+| Supplier disputes PO | Stop PI progression until resolution and relevant reapproval | Procurement / Finance |
+| PO vs PI mismatch | Flag line-level discrepancy and prevent unapproved payment flow | Import / Finance |
+| Vendor bank details changed | Independent verification and dual control before settlement | Finance |
+| Goods damaged / short / fail QC | Quarantine discrepancies, claims and payable hold | Store / QA / Procurement |
+| Duplicate vendor invoice | Block duplicate and investigate | Finance |
+| Advance paid but order cancelled | Settlement/recovery workflow and escalation | Finance / Procurement |
+
+### Policy parameters requiring formal confirmation
+1. Procurement authority matrix and approval thresholds (including whether the ultimate approval title is ED, MD or authorized delegate).
+2. Whether the **counting convention** for China RFQ deadlines excludes the invitation date in every circumstance.
+3. Default closing hour and whether supplier calendars are chosen per supplier or per RFQ.
+4. Sample mandatory/waiver criteria by RM type and acceptable deviations/tolerances.
+5. Vendor prequalification, quotation confidentiality and bid-opening policy.
+6. RFQ extensions, re-tendering, emergency sourcing and single-source approval rights.
+7. Supplier performance scoring weights and tie-break logic.
+8. PO acknowledgment SLA, PO cancellation and PO amendment authority.
+9. Freight, FX and landed-cost standard assumptions, including bank/finance charges.
+10. Finance three-way-match tolerances, advance-payment policy and invoice settlement controls.
+11. Required documents, mandatory legal terms and standard supplier PO clauses.
+12. ERP/email/bank integrations, data migration, retention and operating support owners.
+
+---
+
+## 18. Example acceptance criteria for software testing
+
+| Test ID | Given / when | Expected outcome |
+|---|---|---|
+| AC-01 | Marketing submits complete PR | Sequential PR ID created; Procurement notified |
+| AC-02 | Two compatible PRs consolidated | Quantities trace back to originals; no double allocation |
+| AC-03 | RFQ published for three China vendors | Three distinct, vendor-bound URLs sent and logged |
+| AC-04 | Quote opened by vendor A | Vendor A cannot access vendor B's response |
+| AC-05 | RFQ crosses official China holiday | Deadline adjusts according to approved calendar |
+| AC-06 | RFQ reaches cutoff | New final submissions rejected server-side; old submissions preserved |
+| AC-07 | Procurement approves deadline extension | Prior deadline retained, new one communicated, audit entry created |
+| AC-08 | Supplier leaves required GSM empty for relevant fabric | Final submission blocked with clear validation error |
+| AC-09 | Quote provided in alternate currency/UOM | Comparison converts on controlled source/date and shows assumptions |
+| AC-10 | QA marks sample failed | Supplier cannot be awarded without a documented authorized exception |
+| AC-11 | Marketing returns evaluation | Finance stage remains unavailable until resubmission and ACK |
+| AC-12 | Finance returns on cash/terms issue | ED approval not available until Finance reapproves |
+| AC-13 | ED finally approves valid package | PO generated with correct locked approved data |
+| AC-14 | PO missing a required Incoterms named place | PO auto-email blocked, exception assigned |
+| AC-15 | PO passes validation | Only selected supplier receives approved PDF and ACK link |
+| AC-16 | Supplier disputes price on PO | Dispute recorded; updated terms require approved revision |
+| AC-17 | PI bank details change | Independent validation task created; processing restricted |
+| AC-18 | GRN accepted qty below invoiced qty | Mismatch flagged and payment limited/held per policy |
+| AC-19 | Email provider transiently fails | Controlled retry without generating a second PO ID |
+| AC-20 | Manager reviews dashboard | Role-permitted live stage, delays and audit trail visible |
+
+---
+
+## 19. Sample screen/navigation map
+
+```text
+OIL-PMS
+├── Management Dashboard
+│   ├── Procurement Pipeline
+│   ├── Pending Approvals
+│   ├── Savings & Supplier Performance
+│   └── Exceptions / Escalations
+├── Requisitions
+│   ├── Create / Edit PR
+│   ├── Consolidated Requisition Board
+│   └── Review & Validation
+├── Sourcing / RFQ
+│   ├── RFQ Builder / Supplier Shortlist
+│   ├── Supplier Link & Deadline Administration
+│   ├── Submitted Quotations
+│   ├── Comparative Statement
+│   └── Samples / QA Reports
+├── Negotiation & Awards
+│   ├── Negotiation History
+│   ├── Final Supplier Recommendation
+│   └── Approval Queue (Marketing → Finance → ED)
+├── Purchase Orders
+│   ├── Approved PO PDFs & Dispatch Log
+│   ├── Supplier Acknowledgments
+│   └── Amendments / Disputes
+├── Import & Warehouse
+│   ├── PI / Banking Documents
+│   ├── Shipment Tracking
+│   ├── GRN / Inspection / Claims
+│   └── Invoice & Payment Status
+├── Supplier External Portal (isolated access)
+│   ├── RFQ Details / Quotation Entry / Attachments
+│   ├── Draft / Submit / Confirmation
+│   └── PO Review / Acknowledge / Dispute
+└── Administration
+    ├── Users / Roles / Approval Authorities
+    ├── Supplier & Material Masters
+    ├── Country Working-Day Calendars
+    ├── Templates / Notifications / SLAs
+    ├── FX / UOM / Incoterms / Port Masters
+    └── Audit Logs / Integration Monitoring
+```
+
+---
+
+## 20. Required final deliverables for the software team
+
+The developer's functional specification should trace each requirement above into: (a) screens and field definitions, (b) database entities, (c) APIs/integrations, (d) permissions, (e) workflow transition rules, (f) notification templates, (g) exception handling, (h) security requirements, and (i) acceptance test cases. OIL should approve the outstanding policy choices before declaring the system specification final.
+
+**Document end — OIL-PMS-BRD-001 / v1.0 proposed.**
